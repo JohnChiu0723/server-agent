@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRAVITY Server Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css?v=5">
+</head>
+<body>
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient-grid"></div>
+    <div class="ambient-orb orb-a"></div>
+    <div class="ambient-orb orb-b"></div>
+    <div class="ambient-orb orb-c"></div>
+    <div class="ambient-scanlines"></div>
+  </div>
+
+  <div id="login-screen" class="screen">
+    <form id="login-form" class="login-card glass-panel">
+      <div class="brand">
+        <img src="/static/gravity-logo.png" alt="GRAVITY" class="brand-logo" width="200" height="48">
+        <span id="server-badge" class="server-badge">主服</span>
+        <h1 id="login-title">GRAVITY Server Panel</h1>
+        <p id="login-subtitle">量子級伺服器管理介面</p>
+      </div>
+      <label class="field-label">
+        <span>管理密碼</span>
+        <input id="password-input" type="password" autocomplete="current-password" required>
+      </label>
+      <button type="submit" class="primary glow-btn">登入面板</button>
+      <p id="login-error" class="error hidden"></p>
+    </form>
+  </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar glass-panel">
+      <div class="sidebar-brand">
+        <img src="/static/gravity-logo.png" alt="GRAVITY" class="sidebar-logo" width="120" height="28">
+        <span id="sidebar-badge" class="server-badge">主服</span>
+        <div class="sidebar-meta">
+          <strong id="sidebar-title">GRAVITY</strong>
+          <small id="sidebar-subtitle">Server Panel</small>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-view="dashboard"><span class="nav-icon">◉</span>總覽</button>
+        <button class="nav-btn" data-view="console"><span class="nav-icon">▣</span>主控台</button>
+        <button class="nav-btn" data-view="files"><span class="nav-icon">▤</span>檔案管理</button>
+        <button class="nav-btn" data-view="backups"><span class="nav-icon">▧</span>備份</button>
+        <button class="nav-btn" data-view="schedules"><span class="nav-icon">◷</span>排程</button>
+        <button class="nav-btn" data-view="settings"><span class="nav-icon">⚙</span>設定</button>
+        <button class="nav-btn" data-view="activity"><span class="nav-icon">☰</span>活動記錄</button>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="ghost">登出</button>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="power-bar glass-panel">
+        <div class="power-left">
+          <div id="status-pill" class="status-pill offline">離線</div>
+          <div class="power-meta">
+            <strong id="power-server-name">GRAVITY</strong>
+            <span id="power-subtitle">MCDR · Fabric</span>
+          </div>
+        </div>
+        <div class="power-actions">
+          <button id="btn-start" class="power-btn start glow-btn" title="啟動">▶ 啟動</button>
+          <button id="btn-restart" class="power-btn restart" title="重啟">↻ 重啟</button>
+          <button id="btn-stop" class="power-btn stop" title="停止">■ 停止</button>
+          <button id="btn-stop-exit" class="power-btn danger" title="關閉 MCDR">⏻ 關閉 MCDR</button>
+        </div>
+      </header>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <h2 id="view-title">總覽</h2>
+            <p id="view-subtitle">伺服器狀態與資源監控</p>
+          </div>
+        </header>
+
+        <section id="view-dashboard" class="view">
+          <div class="stats-grid">
+            <article class="stat-card glass-panel">
+              <span class="stat-label">CPU 使用率</span>
+              <strong id="stat-cpu" class="stat-value">—</strong>
+              <span class="stat-hint">Java 程序</span>
+            </article>
+            <article class="stat-card glass-panel">
+              <span class="stat-label">記憶體</span>
+              <strong id="stat-mem" class="stat-value">—</strong>
+              <span id="stat-mem-pct" class="stat-hint">—</span>
+            </article>
+            <article class="stat-card glass-panel">
+              <span class="stat-label">磁碟空間</span>
+              <strong id="stat-disk" class="stat-value">—</strong>
+              <span id="stat-disk-pct" class="stat-hint">—</span>
+            </article>
+            <article class="stat-card glass-panel">
+              <span class="stat-label">伺服器狀態</span>
+              <strong id="stat-status" class="stat-value">—</strong>
+              <span id="stat-port" class="stat-hint">—</span>
+            </article>
+          </div>
+          <div class="cards">
+            <article class="card glass-panel">
+              <h3>快速操作</h3>
+              <p id="mc-status-text">檢查中...</p>
+              <div class="btn-row">
+                <button id="goto-console" class="ghost">開啟主控台</button>
+                <button id="goto-files" class="ghost">檔案管理</button>
+                <button id="goto-backups" class="ghost">備份下載</button>
+              </div>
+            </article>
+            <article class="card glass-panel">
+              <h3>檔案根目錄</h3>
+              <p id="file-root-text" class="mono">-</p>
+            </article>
+            <article class="card glass-panel">
+              <h3>網路資訊</h3>
+              <p class="mono" id="network-info">載入中...</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="view-console" class="view hidden">
+          <div class="console-wrap glass-panel">
+            <div class="console-toolbar">
+              <button id="console-clear" class="ghost">清除畫面</button>
+              <span id="console-stream-status" class="status-pill offline">離線</span>
+              <input id="console-filter" type="text" placeholder="篩選日誌...">
+            </div>
+            <div id="console-output" class="console-output"></div>
+            <form id="console-form" class="console-form">
+              <span class="console-prompt">›</span>
+              <input id="console-input" type="text" placeholder="輸入伺服器指令..." autocomplete="off">
+              <button type="submit" class="primary glow-btn">送出</button>
+            </form>
+          </div>
+        </section>
+
+        <section id="view-files" class="view hidden">
+          <div class="files-toolbar glass-panel">
+            <button id="files-up" class="ghost">↑ 上層</button>
+            <button id="files-refresh" class="ghost">重新整理</button>
+            <button id="files-mkdir" class="ghost">新建資料夾</button>
+            <button id="files-rename" class="ghost" disabled>重新命名</button>
+            <button id="files-zip" class="ghost">打包下載</button>
+            <label class="upload-btn primary glow-btn">
+              上傳檔案
+              <input id="files-upload" type="file" hidden>
+            </label>
+            <input id="files-search" type="search" placeholder="搜尋檔名...">
+            <span id="files-path" class="files-path">/</span>
+          </div>
+          <div class="files-layout">
+            <div id="files-list" class="files-list glass-panel"></div>
+            <div class="file-editor glass-panel">
+              <div class="file-editor-header">
+                <span id="editor-name">未選取檔案</span>
+                <div class="btn-row">
+                  <button id="editor-download" class="ghost" disabled>下載</button>
+                  <button id="editor-save" class="primary glow-btn" disabled>儲存</button>
+                </div>
+              </div>
+              <textarea id="editor-content" placeholder="選取文字檔案以編輯..." disabled></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-backups" class="view hidden">
+          <div class="cards">
+            <article class="card card-backup glass-panel">
+              <h3>世界存档</h3>
+              <p>打包 world 資料夾，包含所有維度與玩家資料。</p>
+              <button id="backup-world" class="primary glow-btn">下載世界備份</button>
+            </article>
+            <article class="card card-backup glass-panel">
+              <h3>配置文件</h3>
+              <p>config、server.properties、白名單與權限設定。</p>
+              <button id="backup-config" class="primary glow-btn">下載配置備份</button>
+            </article>
+            <article class="card card-backup glass-panel">
+              <h3>完整备份</h3>
+              <p>整個伺服器目錄（略過 logs 等大型暫存檔）。</p>
+              <button id="backup-full" class="primary glow-btn">下載完整備份</button>
+            </article>
+          </div>
+        </section>
+
+        <section id="view-schedules" class="view hidden">
+          <div class="section-toolbar">
+            <button id="schedule-add" class="primary glow-btn">新增排程</button>
+          </div>
+          <div id="schedules-list" class="data-table-wrap glass-panel"></div>
+        </section>
+
+        <section id="view-settings" class="view hidden">
+          <div class="tabs glass-panel">
+            <button class="tab-btn active" data-tab="server-properties">server.properties</button>
+            <button class="tab-btn" data-tab="mcdr-config">config.yml (MCDR)</button>
+          </div>
+          <div id="tab-server-properties" class="tab-panel">
+            <div class="settings-toolbar glass-panel">
+              <button id="props-save-raw" class="primary glow-btn">儲存</button>
+              <button id="props-reload" class="ghost">重新載入</button>
+            </div>
+            <textarea id="props-editor" class="settings-editor glass-panel" spellcheck="false"></textarea>
+          </div>
+          <div id="tab-mcdr-config" class="tab-panel hidden">
+            <div class="settings-toolbar glass-panel">
+              <button id="mcdr-save" class="primary glow-btn">儲存</button>
+              <button id="mcdr-reload" class="ghost">重新載入</button>
+            </div>
+            <textarea id="mcdr-editor" class="settings-editor glass-panel" spellcheck="false"></textarea>
+          </div>
+        </section>
+
+        <section id="view-activity" class="view hidden">
+          <div id="activity-list" class="activity-list"></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <dialog id="schedule-dialog" class="modal glass-panel">
+    <form id="schedule-form" method="dialog">
+      <h3 id="schedule-dialog-title">新增排程</h3>
+      <input type="hidden" id="schedule-id">
+      <label class="field-label">名稱<input id="schedule-name" required></label>
+      <label class="field-label">Cron 表達式<input id="schedule-cron" placeholder="*/5 * * * *" required></label>
+      <label class="field-label">動作
+        <select id="schedule-action">
+          <option value="command">執行指令</option>
+          <option value="start">啟動伺服器</option>
+          <option value="stop">停止伺服器</option>
+          <option value="restart">重啟伺服器</option>
+        </select>
+      </label>
+      <label id="schedule-command-wrap" class="field-label">指令<input id="schedule-command" placeholder="say 自動備份完成"></label>
+      <label class="checkbox-label"><input type="checkbox" id="schedule-enabled" checked> 啟用</label>
+      <div class="modal-actions">
+        <button type="button" id="schedule-cancel" class="ghost">取消</button>
+        <button type="submit" class="primary glow-btn">儲存</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast glass-panel hidden"></div>
+  <script src="/static/app.js?v=6"></script>
+</body>
+</html>

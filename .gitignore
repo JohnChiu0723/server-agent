@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Runtime data / caches
+dify-data/
+.cbm-cache/
+.uploads/
+mcdr-logs/
+
+# Minecraft server instances (worlds, mods, per-server secrets)
+minecraft-server/
+minecraft-mirror/
+minecraft-creative/
+
+# Agent memory: keep docs (e.g. profile.md), ignore chats and logs
+agent_memory/dify_chat_history.json
+agent_memory/*.log
+agent_memory/*.jsonl
+
+# Secrets (keep only the template)
+*.env
+.env
+.env.*
+!.env.example
+.rcon-cli.*
+
+# Large third-party binaries
+tools/cloudflared.exe
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/

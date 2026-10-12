@@ -1,0 +1,15 @@
+{
+  "world":[
+    "world"
+  ],
+  "command":"python3 -m mcdreforged",
+  "rcon":{
+    "enable":true,
+    "host":"gravity-mirror",
+    "port":25575,
+    "password":"YOUR_RCON_PASSWORD"
+  },
+  "source":"./server",
+  "target":"./Mirror/server",
+  "permission_level":0
+}

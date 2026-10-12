@@ -1,0 +1,12 @@
+{
+    "id": "server_panel",
+    "version": "2.0.0",
+    "name": "Server Panel",
+    "description": {
+        "zh_tw": "Web 管理面板：檔案管理、伺服器開關機、主控台",
+        "en_us": "Web admin panel: file manager, server control, console"
+    },
+    "authors": ["GRAVITY"],
+    "link": "",
+    "dependencies": {}
+}

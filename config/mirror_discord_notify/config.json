@@ -1,0 +1,15 @@
+{
+    "enabled": true,
+    "webhook_url": "YOUR_DISCORD_WEBHOOK_URL",
+    "webhook_name": "GRVY鏡像聊天",
+    "webhook_avatar": "https://cdn.discordapp.com/attachments/1488865939905839230/1495361415685476492/IMG_4740.jpg",
+    "player_avatar_url": "https://starlightskins.lunareclipse.studio/render/pixel/{name}/face?randomuuid={rand}",
+    "embed_join_color": 5763719,
+    "embed_leave_color": 15548997,
+    "embed_start_color": 5763719,
+    "embed_stop_color": 15548997,
+    "message_start": "**✅ 鏡像伺服器已開啟！**",
+    "message_stop": "**❌ 鏡像伺服器已關閉！**",
+    "message_join": "📥 **{name}** 加入了鏡像伺服器",
+    "message_leave": "📤 **{name}** 離開了鏡像伺服器"
+}

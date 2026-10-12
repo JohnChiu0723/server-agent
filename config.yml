@@ -1,0 +1,52 @@
+language: zh_tw
+working_directory: server
+command_prefix: '!!'
+command_prefix_console: '!!'
+
+# Docker 容器內 Java 21 + ZGC（主服 16G heap / SoftMax 12G）
+start_command: java -Dfile.encoding=UTF-8 -Djava.awt.headless=true -Xms16G -Xmx16G -XX:SoftMaxHeapSize=12G -XX:+UseZGC -XX:+ZGenerational -XX:+AlwaysPreTouch -XX:+UseStringDeduplication -XX:+ZProactive -XX:-ZUncommit -XX:TrimNativeHeapInterval=5000 -XX:ConcGCThreads=4 -XX:ParallelGCThreads=4 -XX:ZAllocationSpikeTolerance=3.0 -Djdk.nio.maxCachedBufferSize=262144 -jar server.jar nogui
+
+handler: vanilla_handler
+encoding: utf8
+decoding: utf8
+
+plugin_directories:
+- plugins
+
+rcon:
+  enable: true
+  address: 127.0.0.1
+  port: 25575
+  password: YOUR_RCON_PASSWORD  # 請改為與 server.properties 的 rcon.password 一致
+
+catalogue_meta_cache_ttl: 1200
+catalogue_meta_fetch_timeout: 15
+check_update: false
+advanced_console: true
+telemetry: false
+watchdog_threshold: 60
+handler_detection: true
+write_server_output_to_log_file: true
+
+cron: []
+catalogue_meta_url:
+plugin_download_url:
+plugin_download_timeout: 15
+plugin_pip_install_extra_args:
+http_proxy:
+https_proxy:
+disable_console_thread: false
+disable_console_color: false
+custom_handlers:
+custom_info_reactors:
+debug:
+  all: false
+  mcdr: false
+  process: false
+  handler: false
+  reactor: false
+  plugin: false
+  permission: false
+  command: false
+  task_executor: false
+  telemetry: false

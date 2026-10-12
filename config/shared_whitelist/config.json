@@ -1,0 +1,10 @@
+{
+    "role": "primary",
+    "source_whitelist": "./server/whitelist.json",
+    "target_whitelist": "./Mirror/server/whitelist.json",
+    "check_interval": 2.0,
+    "mirror_rcon_enable": true,
+    "mirror_rcon_host": "gravity-mirror",
+    "mirror_rcon_port": 25576,
+    "mirror_rcon_password": "YOUR_RCON_PASSWORD"
+}

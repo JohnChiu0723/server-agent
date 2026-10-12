@@ -1,0 +1,18 @@
+# 伺服器管家 — Python 環境依賴
+# 安裝指令：pip install -r requirements.txt
+
+# ── 前端面板 ──────────────────────────────────
+streamlit>=1.37.0
+
+# ── Docker 容器控制 ───────────────────────────
+docker>=7.0.0
+
+# ── Minecraft RCON 協議 ───────────────────────
+mcrcon>=0.7.0
+
+# ── Dify / HTTP API 請求 ──────────────────────
+requests>=2.32.0
+PyYAML>=6.0.1
+
+# ── 桌面視窗包殼（pywebview）─────────────────
+pywebview>=5.0

@@ -1,0 +1,56 @@
+Q: 這個伺服器叫什麼名字？
+A: GRAVITY，是一個 Minecraft 1.21.4 Fabric 技術型生電伺服器（Technical Minecraft Server），使用 MCDReforged 作為插件管理框架。
+
+Q: 伺服器有哪些主要模組？
+A: 核心效能模組：Fabric Carpet、Lithium（鋰）、FerriteCore、Krypton、C2ME（並發區塊管理）。跨版本模組：ViaVersion、ViaBackwards、ViaFabric。跨平台模組：Floodgate。工具模組：Spark（效能分析）、DiscordIntegration（Discord 聊天同步）、StyledChat、StyledNicknames、Fabrictailor（皮膚同步）、Syncmatica（藍圖同步）。約 40 個模組。
+
+Q: 伺服器配置多少記憶體？
+A: JVM 配置 -Xms20G -Xmx20G，使用 ZGC + ZGenerational（低延遲垃圾回收器）。MCDR 層級 watchdog_threshold 設為 60 秒，配合 max-tick-time=-1（關閉原版 watchdog 以避免生電農場被誤判超時）。
+
+Q: 伺服器有哪些 MCDR 插件？
+A: DayCountNBT（天數計數）、MirrorServerReforged（鏡像服同步）、PrimeBackup（增量備份）、joinMOTDnext（下次加入歡迎）、shared_whitelist（白名單跨服同步）、mirror_discord_notify（Discord 玩家進出通知）、discord_whitelist（Discord 白名單查詢）、auto_player_use（假人自動右鍵）、zzz_pb_ntfs_compat（NTFS 相容修補）、zzz_pb_welcome_count（玩家歡迎計數）。
+
+Q: superwy 是什麼？有什麼功能？
+A: 超級無影（superwy）是一個 Node.js Minecraft Bot（使用 mineflayer），負責自動化倉庫管理。遊戲內指令包括：!!grab <物品> [數量]（從倉庫取物）、!!kd <物品> [數量]（空投取物並投遞到玩家位置）、!!kd 快遞20個白色混凝土~~（LLM 語義解析空投）、!!d <物品>（投遞背包中的物品）、!goto me / !goto x y z（尋路移動 Bot）、!!gg（補充金胡蘿蔔保活）。Web 管理界面在 http://localhost:3000。
+
+Q: superwy 倉庫掃描區域有哪些？
+A: 四個區域：left（全物品左側，x:149-173, y:43-63, z:-74~-8）、right（全物品右側，x:148-173, y:43-59, z:8-89）、bulk（大宗倉庫，x:175-256, y:43-101, z:-19-19）、unstackable（不可堆疊區，x:130-143, y:43-58, z:8-89）。Bot 復位點在 (160, 50, 0)。Bot 尋路不使用挖掘功能（canDig = false）。
+
+Q: Geyser 是做什麼的？如何設定？
+A: Geyser 是一個 Bedrock ↔ Java 跨平台代理，讓手機/主機版（Bedrock Edition）玩家可以連線到 GRAVITY JAVA 伺服器。Geyser-Standalone.jar 放在 Geyser_Proxy/ 目錄，監聽 UDP port 19132，連接本機 127.0.0.1:25565。驗證方式使用 Floodgate（auth-type: floodgate），MOTD 和玩家數量直接轉發 JAVA 伺服器（passthrough）。
+
+Q: 伺服器的雙層架構（Level 1 / Level 2）是什麼？
+A: Level 1 是 Windows 本機直接運行的主伺服器（port 25565），MCDR + Fabric 直連。Level 2 是 Pterodactyl Panel（WSL2 Docker 內）管理的鏡像備援環境，包含第二個 Minecraft 實例（port 25566）。使用 MirrorServerReforged 同步世界存檔，shared_whitelist 同步白名單。兩層同時運行以提供備援。
+
+Q: 備份策略是什麼？
+A: 使用 rclone 透過 WebDAV 協定增量備份到 UGREEN NAS（backup.idunno.online）。Backup-To-NAS.ps1 腳本備份兩部分：(1) Windows 端的 MCDR 主服目錄（排除 logs/cache/crash-reports），(2) WSL 端的 Pterodactyl volumes。單檔限制 95MB（Cloudflare 免費層限制），超過大小的檔案自動跳過並記錄在 skipped_oversize 日誌。每日自動排程由 Register-DailyTask.bat 註冊。另外 PrimeBackup MCDR 插件也提供遊戲內備份功能（!!pb make）。
+
+Q: 如何啟動伺服器？
+A: 方案一：執行 Start-Game-Servers.bat（啟動 MCDR + Minecraft + Geyser）。方案二：打開 Pterodactyl Panel（http://127.0.0.1:8090/login），在面板中啟動遊戲伺服器實例。方案三：直接在命令列執行 config.yml 中的 start_command（java -Xms20G -Xmx20G ... -jar server.jar nogui）。
+
+Q: RCON 設定是什麼？
+A: RCON 在主伺服器的 config.yml 和 server.properties 中都有設定：address=127.0.0.1、port=25575、password=<YOUR_RCON_PASSWORD>。鏡像服 RCON port=25576，使用相同密碼。
+
+Q: 伺服器難度和遊戲設定？
+A: difficulty=hard（困難模式）、gamemode=survival（生存模式）、pvp=true（PVP 開啟）、white-list=true（白名單啟用）、enforce-whitelist=true（強制白名單）、online-mode=true（正版驗證開啟）。max-players=999（顯示上限）、view-distance=10、simulation-distance=8。max-tick-time=-1（關閉原版 watchdog）、max-chained-neighbor-updates=1000000（紅石更新鏈上限極高）、rate-limit=0（關閉封包速率限制）。
+
+Q: 如何管理白名單？
+A: 遊戲內指令：/whitelist add <玩家名>、/whitelist remove <玩家名>。MCDR 指令：!!whitelist add/remove。shared_whitelist 插件會自動同步到鏡像服（主服 → 鏡像服 RCON）。discord_whitelist 插件可透過 Discord /whitelistlist 命令查詢白名單。
+
+Q: 如何分析伺服器效能問題？
+A: 使用 Spark 模組：遊戲內執行 /spark profiler --timeout 300 開始效能分析（300 秒），結束後取得報告連結。查看 logs/latest.log 中的 TPS 和 MSPT 數值。如果 TPS 低於 18 或 MSPT 高於 50，表示有效能瓶頸。常見瓶頸源：過多實體、大量漏斗運算、區塊生成、紅石線路。
+
+Q: Pterodactyl Panel 是什麼？如何存取？
+A: Pterodactyl 是開源遊戲伺服器管理面板，在 WSL2 的 Docker 中運行。Panel（網頁界面）在 http://127.0.0.1:8090，Wings（守護程式）在 port 8080/2022。Panel 後端使用 nginx 反向代理、MariaDB 資料庫、Redis 快取。用來管理 Minecraft 遊戲伺服器實例的啟動/停止/檔案/Console。
+
+Q: superwy 的語義解析空投如何運作？
+A: 玩家在遊戲中輸入 !!kd 快遞20個白色混凝土~~，chat.js 檢測到 ~~ 結尾後，調用 semanticKdParser.js 透過 LLM API（目前設定阿里雲 DashScope qwen3.5-plus）解析自然語言。LLM 返回結構化 JSON（itemName + count + confidence），然後調用 airdropService.run() 執行取貨→返回原點→投遞的流程。
+
+Q: superwy 的保活機制是什麼？
+A: keepalive.js 監控 Bot 的血量和飽和度。當血量低於 20 時自動吃金胡蘿蔔補血。金胡蘿蔔不足 64 個時，自動尋路到座標 (120, 50, 8) 的潛影盒取貨。!!gg 指令可手動觸發補充。還有一個可選的擬人模式（擬人.enabled），玩家靠近時 Bot 會鎖定視角跟隨。
+
+Q: 如何讓 superwy 掃描倉庫？
+A: 打開 superwy Web 界面（http://localhost:3000），選擇掃描區域後點擊開始掃描。或透過 WebSocket 發送 command_scan 指令。掃描支援斷點續傳（即使 Bot 斷線重連，會記錄進度並在重連後 3 秒自動恢復）。掃描速度可調整（1-1000ms，預設 20ms）。支援 force_rescan（清空資料庫重掃）。
+
+Q: 伺服器使用什麼 Java 版本？
+A: JDK 21（Eclipse Adoptium jdk-21.0.10.7-hotspot）。路徑：C:/Program Files/Eclipse Adoptium/jdk-21.0.10.7-hotspot/bin/java.exe。JVM 參數包含：-Dfile.encoding=UTF-8、-Djava.awt.headless=true、-XX:+UnlockExperimentalVMOptions、-XX:+UseZGC、-XX:+ZGenerational、-XX:+DisableExplicitGC、-XX:+PerfDisableSharedMem。

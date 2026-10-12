@@ -1,0 +1,8 @@
+{
+    "target_player": "sleep",
+    "delay_seconds": 1.5,
+    "wake_keywords": [
+        "left the bed",
+        "wake up"
+    ]
+}

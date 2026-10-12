@@ -1,0 +1,14 @@
+dify-data/
+minecraft-server/_archive/
+minecraft-server/_archive/**
+minecraft-mirror/_archive/
+minecraft-server/logs/
+minecraft-mirror/logs/
+**/__pycache__/
+**/.venv/
+**/node_modules/
+.git/
+.cbm-cache/
+**/*.jar
+**/*.zip
+**/*.log

@@ -1,0 +1,47 @@
+# ==========================================================================
+# rclone 過濾規則 - 整個專案備份到 NAS 用
+# 規則由上往下比對，第一個命中者生效；未被任何 "-" 命中的檔案都會被備份。
+# 用法： rclone copy <src> <dst> --filter-from scripts/nas-backup.filter.txt
+# ==========================================================================
+
+# --- 舊封存 / 匯出（最大宗，約 87GB，屬垃圾）---
+- /_archive/**
+- /_archive_old_scripts/**
+- /minecraft-server/_archive/**
+- /minecraft-mirror/_archive/**
+
+# --- 各種 node_modules（任意層級）---
+- node_modules/**
+
+# --- 既有的備份資料（本身就是備份，異地再備份太冗餘）---
+- pb_files/**
+- /pb_backups/**
+- QuickBackupMulti/**
+
+# --- 可重新下載的 AI 模型（ollama / bge-reranker，約 5GB）---
+- /dify-data/ollama/**
+- /dify-data/tei-reranker/**
+
+# --- 外掛執行環境（Python venv / uv 快取，等同 node_modules，可重生、且含大量 symlink）---
+- /dify-data/plugin_daemon/cwd/**
+- **/.venv/**
+- **/.uv-cache/**
+
+# --- 大型日誌（會不斷增長，還原無用）---
+- /mcdr-logs/**
+- /mcdr-logs-mirror/**
+
+# --- 快取 / 暫存 / 編譯產物 ---
+- /.cbm-cache/**
+- /tmp/**
+- __pycache__/**
+- /.uploads/**
+
+# --- 執行中會被鎖定 / 持續寫入的檔案（備份無意義，且會造成上傳錯誤）---
+- **/session.lock
+- **/gc.log
+- **/logs/latest.log
+- **/logs/debug.log
+
+# --- 版本控制內部資料 ---
+- /.git/**

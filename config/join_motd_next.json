@@ -1,0 +1,24 @@
+{
+    "bot_prefix": "bot_",
+    "player_join": {
+        "enable": true,
+        "scope": "player",
+        "message": [
+            "<text>§5{player}§r加入了游戏</text>",
+            "<text>{hitokoto}</text>"
+        ]
+    },
+    "player_left": {
+        "enable": true,
+        "scope": "player",
+        "message": [
+            "<text>§5{player}§r离开了游戏</text>"
+        ]
+    },
+    "random_text": {
+        "hitokoto": [
+            "内心湛然，则无往而不乐",
+            "§6万法缘生，皆系缘分§r"
+        ]
+    }
+}

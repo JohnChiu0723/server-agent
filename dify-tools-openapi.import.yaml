@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: GRAVITY Server Tools API
+  description: |
+    伺服器管家本機工具 API。Dify Agent 透過此 API 讀寫設定檔、執行 RCON、控制 Docker。
+    使用前請將 servers.url 改為你的 Cloudflare Tunnel / ngrok 公網網址。
+  version: 1.0.0
+
+servers:
+  - url: https://decided-parental-structures-harris.trycloudflare.com
+    description: 替換為隧道公網 URL（Dify 雲端無法連 localhost）
+
+security:
+  - BearerAuth: []
+
+paths:
+  /health:
+    get:
+      operationId: health_check
+      summary: 健康檢查
+      responses:
+        "200":
+          description: OK
+
+  /tool/run_diagnostic:
+    post:
+      operationId: run_diagnostic
+      summary: 綜合診斷伺服器狀態、日誌與 docker-compose 摘要
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                  default: main
+              required: [server_type]
+      responses:
+        "200":
+          description: 診斷結果
+
+  /tool/server_status:
+    post:
+      operationId: get_server_status
+      summary: 查詢伺服器狀態與 server.properties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                  description: main=主服, mirror=鏡像服
+              required: [server_type]
+      responses:
+        "200":
+          description: 狀態資訊
+
+  /tool/server_action:
+    post:
+      operationId: server_action
+      summary: 啟動/停止/重啟 Docker 容器
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                action:
+                  type: string
+                  enum: [start, stop, restart]
+              required: [server_type, action]
+      responses:
+        "200":
+          description: 執行結果
+
+  /tool/rcon:
+    post:
+      operationId: run_rcon
+      summary: 執行 Minecraft 遊戲指令（自動補 / 前綴）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                command:
+                  type: string
+                  description: 例 list, say hello, whitelist add Steve
+              required: [server_type, command]
+      responses:
+        "200":
+          description: RCON 回覆
+
+  /tool/mcdr:
+    post:
+      operationId: run_mcdr
+      summary: 執行 MCDR 控制台指令（!!pb, !!msr 等）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                command:
+                  type: string
+                  description: 例 !!pb list, !!msr status
+              required: [server_type, command]
+      responses:
+        "200":
+          description: 執行結果
+
+  /tool/logs:
+    post:
+      operationId: get_logs
+      summary: 讀取 latest.log 最後 N 行
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                lines:
+                  type: integer
+                  default: 50
+              required: [server_type]
+      responses:
+        "200":
+          description: 日誌內容
+
+  /tool/read_file:
+    post:
+      operationId: read_file
+      summary: 讀取允許目錄內的設定檔
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  description: 相對路徑，例 config/prime_backup/config.json
+              required: [path]
+      responses:
+        "200":
+          description: 檔案內容
+
+  /tool/write_file:
+    post:
+      operationId: write_file
+      summary: 寫入設定檔（含 docker-compose.yml、config.yml、config/）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  description: 例 config/shared_whitelist/config.json
+                content:
+                  type: string
+                  description: 完整檔案內容
+              required: [path, content]
+      responses:
+        "200":
+          description: 寫入結果
+
+  /tool/update_property:
+    post:
+      operationId: update_server_property
+      summary: 修改 server.properties 單一鍵值
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                key:
+                  type: string
+                value:
+                  type: string
+              required: [server_type, key, value]
+      responses:
+        "200":
+          description: 更新結果
+
+  /tool/list_files:
+    post:
+      operationId: list_files
+      summary: 列出目錄內容
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  default: config
+              required: [path]
+      responses:
+        "200":
+          description: 檔案列表
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer

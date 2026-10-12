@@ -1,0 +1,553 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   GRAVITY 伺服器管家 — Professional Dashboard Design System v7
+   SOLO / TRAE-inspired · Clean · Minimal · Enterprise-grade
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Core Reset ── */
+*,*::before,*::after {
+  font-family: -apple-system, "SF Pro Display", "SF Pro Text", "PingFang SC",
+               "Helvetica Neue", "Microsoft JhengHei", Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  box-sizing: border-box;
+}
+
+/* ── Hide Streamlit Chrome ── */
+#MainMenu, footer,
+[data-testid="stToolbar"],
+[data-testid="stHeader"],
+[data-testid="stDecoration"],
+[data-testid="stStatusWidget"] { display: none !important; }
+
+/* ── App Canvas ── */
+.stApp { background: #F5F5F7 !important; }
+[data-testid="stAppViewContainer"],
+.main, [data-testid="stMain"] { background: transparent !important; }
+.block-container {
+  padding-top: 1.6rem !important;
+  padding-bottom: 2rem !important;
+  max-width: 1600px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+@keyframes floatA {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%    { transform: translate(24px,-44px) scale(1.04); }
+  66%    { transform: translate(-18px,20px) scale(0.97); }
+}
+@keyframes floatB {
+  0%,100% { transform: translate(0,0) scale(1); }
+  50%    { transform: translate(-28px,-34px) scale(1.06); }
+}
+@keyframes pulseGreen {
+  0%,100% { box-shadow: 0 0 0 0 rgba(52,199,89,.55); }
+  50%    { box-shadow: 0 0 0 9px rgba(52,199,89,0); }
+}
+@keyframes pulseBlue {
+  0%,100% { box-shadow: 0 0 0 0 rgba(0,122,255,.45); }
+  50%    { box-shadow: 0 0 0 9px rgba(0,122,255,0); }
+}
+@keyframes pulseOrange {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,149,0,.6); }
+  50%    { box-shadow: 0 0 0 9px rgba(255,149,0,0); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideRight {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CARDS — Clean, minimal, professional
+   ═══════════════════════════════════════════════════════════════════════════ */
+[data-testid="stVerticalBlockBorderWrapper"] {
+  background: rgba(255,255,255,0.70) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02), 0 4px 16px rgba(0,0,0,0.03) !important;
+  transition: all 0.3s cubic-bezier(0.25,1,0.5,1) !important;
+  margin-bottom: 12px !important;
+}
+[data-testid="stVerticalBlockBorderWrapper"]:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05) !important;
+  border-color: rgba(0,0,0,0.09) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ═══════════════════════════════════════════════════════════════════════════ */
+h1 {
+  font-size: 1.75rem !important;
+  font-weight: 750 !important;
+  letter-spacing: -.03em !important;
+  color: #1d1d1f !important;
+}
+h2, h3 {
+  font-weight: 620 !important;
+  letter-spacing: -.015em !important;
+  color: #1d1d1f !important;
+}
+hr {
+  border: none !important;
+  border-top: 1px solid rgba(0,0,0,.06) !important;
+  margin: 8px 0 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BUTTONS — Apple-inspired pill buttons
+   ═══════════════════════════════════════════════════════════════════════════ */
+.stButton > button {
+  border-radius: 50px !important;
+  font-weight: 560 !important;
+  font-size: 13.5px !important;
+  letter-spacing: .01em !important;
+  border: none !important;
+  transition: all 0.3s cubic-bezier(0.25,1,0.5,1) !important;
+  padding: 8px 20px !important;
+  width: 100% !important;
+}
+.stButton > button:active { transform: scale(0.96) !important; }
+
+/* Primary */
+.btn-primary .stButton > button {
+  background: #007AFF !important;
+  color: #fff !important;
+  box-shadow: 0 1px 3px rgba(0,122,255,.3), 0 4px 10px rgba(0,122,255,.15) !important;
+}
+.btn-primary .stButton > button:hover {
+  background: #0066D6 !important;
+  box-shadow: 0 2px 5px rgba(0,122,255,.35), 0 6px 16px rgba(0,122,255,.2) !important;
+}
+
+/* Secondary */
+.btn-secondary .stButton > button {
+  background: rgba(0,0,0,.04) !important;
+  color: #1d1d1f !important;
+  border: 1px solid rgba(0,0,0,.08) !important;
+}
+.btn-secondary .stButton > button:hover {
+  background: rgba(0,0,0,.06) !important;
+}
+
+/* Danger */
+.btn-danger .stButton > button {
+  background: rgba(255,59,48,.06) !important;
+  color: #FF3B30 !important;
+  border: 1px solid rgba(255,59,48,.1) !important;
+}
+.btn-danger .stButton > button:hover {
+  background: rgba(255,59,48,.10) !important;
+}
+
+/* Pill (compact) */
+.btn-pill .stButton > button {
+  background: rgba(0,0,0,.03) !important;
+  color: #1d1d1f !important;
+  border: 1px solid rgba(0,0,0,.06) !important;
+  font-size: 12.5px !important;
+  padding: 6px 14px !important;
+  font-weight: 540 !important;
+}
+.btn-pill .stButton > button:hover {
+  background: rgba(0,0,0,.06) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   INPUTS & SELECTS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.stTextInput > label {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+  color: #86868b !important;
+}
+.stTextInput > div > div > input {
+  background: rgba(255,255,255,.55) !important;
+  border: 1px solid rgba(0,0,0,.08) !important;
+  border-radius: 10px !important;
+  color: #1d1d1f !important;
+  font-size: 14px !important;
+  padding: 9px 14px !important;
+  transition: all .25s ease !important;
+}
+.stTextInput > div > div > input::placeholder { color: #adadb3 !important; }
+.stTextInput > div > div > input:focus {
+  background: rgba(255,255,255,.9) !important;
+  border-color: rgba(0,122,255,.5) !important;
+  box-shadow: 0 0 0 3px rgba(0,122,255,.08) !important;
+}
+
+.stSelectbox > label {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+  color: #86868b !important;
+}
+.stSelectbox > div > div {
+  background: rgba(255,255,255,.55) !important;
+  border: 1px solid rgba(0,0,0,.08) !important;
+  border-radius: 10px !important;
+  color: #1d1d1f !important;
+}
+
+.stRadio > label { display: none !important; }
+.stRadio [data-testid="stMarkdownContainer"] p {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #1d1d1f !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LOG TEXTAREA
+   ═══════════════════════════════════════════════════════════════════════════ */
+.stTextArea > label { display: none !important; }
+.stTextArea > div > div > textarea {
+  background: rgba(0,0,0,.02) !important;
+  border: 1px solid rgba(0,0,0,.06) !important;
+  border-radius: 12px !important;
+  font-family: "SF Mono", "Cascadia Code", "Fira Code", Consolas, monospace !important;
+  font-size: 11px !important;
+  color: #3d3d3f !important;
+  line-height: 1.5 !important;
+  padding: 12px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ═══════════════════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.2); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DISABLED BUTTONS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.stButton > button:disabled, .stButton > button[disabled] {
+  opacity: .28 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+  filter: grayscale(30%) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   TOAST
+   ═══════════════════════════════════════════════════════════════════════════ */
+[data-testid="stToast"] {
+  border-radius: 16px !important;
+  background: rgba(255,255,255,.92) !important;
+  backdrop-filter: blur(28px) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.1) !important;
+  border: 1px solid rgba(0,0,0,.06) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHAT PANEL — SOLO-style AI conversation
+   ═══════════════════════════════════════════════════════════════════════════ */
+.cursor-ai-panel [data-testid="stVerticalBlockBorderWrapper"]:hover {
+  transform: none !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,.02), 0 4px 16px rgba(0,0,0,.03) !important;
+}
+.cursor-ai-panel [data-testid="stVerticalBlockBorderWrapper"] {
+  border-radius: 14px !important;
+}
+
+/* Chat viewport — the message area */
+.cursor-chat-viewport {
+  background: rgba(255,255,255,.48) !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(0,0,0,.03) !important;
+}
+
+/* Individual chat messages */
+[data-testid="stChatMessage"] {
+  background: transparent !important;
+  border: none !important;
+  padding: 10px 4px !important;
+  gap: 10px !important;
+  align-items: flex-start !important;
+}
+
+/* Avatar icons */
+[data-testid="stChatMessageAvatar"],
+[data-testid="stChatMessageAvatar"] > span,
+[data-testid="chatAvatarIcon-user"],
+[data-testid="chatAvatarIcon-assistant"] {
+  font-size: 0 !important;
+  line-height: 0 !important;
+  color: transparent !important;
+  overflow: hidden !important;
+  min-width: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+}
+[data-testid="stChatMessageAvatar"] img {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+  object-fit: cover !important;
+}
+
+/* Message content — clean typography */
+[data-testid="stChatMessageContent"] {
+  max-width: 100% !important;
+  font-size: 14px !important;
+  line-height: 1.68 !important;
+  color: #1d1d1f !important;
+  padding: 6px 2px !important;
+}
+[data-testid="stChatMessageContent"] p,
+[data-testid="stChatMessageContent"] li {
+  font-size: 14px !important;
+  line-height: 1.68 !important;
+  margin: 0 0 7px !important;
+}
+[data-testid="stChatMessageContent"] h1,
+[data-testid="stChatMessageContent"] h2,
+[data-testid="stChatMessageContent"] h3,
+[data-testid="stChatMessageContent"] h4,
+[data-testid="stChatMessageContent"] h5,
+[data-testid="stChatMessageContent"] h6 {
+  font-size: 15px !important;
+  font-weight: 620 !important;
+  letter-spacing: -.01em !important;
+  color: #1d1d1f !important;
+  margin: 14px 0 6px !important;
+  line-height: 1.4 !important;
+}
+[data-testid="stChatMessageContent"] strong { font-weight: 620 !important; }
+[data-testid="stChatMessageContent"] blockquote {
+  margin: 8px 0 !important;
+  padding: 8px 12px !important;
+  border-left: 2.5px solid rgba(134,134,139,.3) !important;
+  background: rgba(134,134,139,.04) !important;
+  border-radius: 0 8px 8px 0 !important;
+  font-size: 13px !important;
+  color: #636366 !important;
+}
+[data-testid="stChatMessageContent"] code {
+  font-size: 12.5px !important;
+  background: rgba(0,0,0,.04) !important;
+  padding: 1.5px 5px !important;
+  border-radius: 4px !important;
+  font-family: "SF Mono", "Cascadia Code", Consolas, monospace !important;
+}
+[data-testid="stChatMessageContent"] pre {
+  font-size: 12.5px !important;
+  background: rgba(0,0,0,.03) !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  margin: 8px 0 !important;
+}
+
+/* User message — subtle tint */
+.stChatMessage[data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-user"])
+  [data-testid="stChatMessageContent"] {
+  background: rgba(0,122,255,.05) !important;
+  border-radius: 10px !important;
+  padding: 8px 12px !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   THINKING BLOCKS — SOLO-style progressive reasoning (blue accent)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.cursor-think {
+  margin: 4px 0 14px !important;
+  border: 1px solid rgba(0,122,255,.14) !important;
+  border-radius: 8px !important;
+  background: rgba(0,122,255,.025) !important;
+  padding: 0 !important;
+  animation: fadeIn 0.2s ease-out;
+  overflow: hidden !important;
+}
+
+.cursor-think summary {
+  cursor: pointer !important;
+  list-style: none !important;
+  font-size: 12.5px !important;
+  font-weight: 620 !important;
+  color: rgba(0,122,255,.72) !important;
+  user-select: none !important;
+  padding: 8px 10px !important;
+  transition: all 0.15s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  border-bottom: 1px solid transparent !important;
+}
+.cursor-think summary:hover { color: rgba(0,122,255,.9) !important; }
+.cursor-think summary::-webkit-details-marker { display: none !important; }
+.cursor-think summary::before {
+  content: "▸" !important;
+  font-size: 9px !important;
+  color: rgba(0,122,255,.55) !important;
+  transition: transform 0.15s ease !important;
+  display: inline-block !important;
+  width: 12px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+}
+.cursor-think[open] summary {
+  border-bottom: 1px solid rgba(0,122,255,.08) !important;
+  padding-bottom: 6px !important;
+}
+.cursor-think[open] summary::before {
+  content: "▾" !important;
+  transform: rotate(0deg) !important;
+}
+
+.cursor-think-body {
+  padding: 10px 12px !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+  color: rgba(60,60,67,.7) !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+}
+.ai-thinking, .ai-thinking-label { display: none !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   CHAT INPUT
+   ═══════════════════════════════════════════════════════════════════════════ */
+[data-testid="stChatInput"] {
+  background: rgba(255,255,255,.78) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(0,0,0,.06) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  margin-top: 8px !important;
+}
+[data-testid="stChatInput"] textarea {
+  background: transparent !important;
+  font-size: 13.5px !important;
+  color: #1d1d1f !important;
+  line-height: 1.5 !important;
+}
+[data-testid="stChatInput"] textarea::placeholder { color: #adadb3 !important; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PASTE IMAGE HOOKS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.cursor-chat-pending img {
+  border-radius: 8px !important;
+  border: 1px solid rgba(0,0,0,.05) !important;
+}
+.cursor-paste-hook iframe {
+  height: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AUTO-REFRESH
+   ═══════════════════════════════════════════════════════════════════════════ */
+.grv-refresh-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #34C759;
+  margin-right: 5px;
+}
+.grv-refresh-dot.active { animation: pulseGreen 2s ease-in-out infinite; }
+.grv-refresh-dot.paused { background: #8E8E93; animation: none; }
+.grv-refresh-countdown {
+  font-size: 10px;
+  color: #86868b;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SPARKLINE
+   ═══════════════════════════════════════════════════════════════════════════ */
+.grv-sparkline {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 24px;
+  margin-top: 2px;
+}
+.grv-sparkline-bar {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  transition: height 0.4s cubic-bezier(0.25,1,0.5,1);
+  min-height: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATUS BAR (top metrics)
+   ═══════════════════════════════════════════════════════════════════════════ */
+.grv-status-bar {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+  margin-bottom: 14px;
+}
+.grv-status-item {
+  flex: 1;
+  background: rgba(255,255,255,.55);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(0,0,0,.05);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.02);
+}
+.grv-status-item .icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.grv-status-item .icon.green  { background: rgba(52,199,89,.1); }
+.grv-status-item .icon.blue   { background: rgba(0,122,255,.08); }
+.grv-status-item .icon.orange { background: rgba(255,149,0,.08); }
+.grv-status-item .icon.red    { background: rgba(255,59,48,.08); }
+.grv-status-item .icon.gray   { background: rgba(142,142,147,.06); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATUS INDICATOR
+   ═══════════════════════════════════════════════════════════════════════════ */
+[data-testid="stStatus"] {
+  border-radius: 12px !important;
+  border: 1px solid rgba(0,0,0,.05) !important;
+  background: rgba(255,255,255,.6) !important;
+  backdrop-filter: blur(14px) !important;
+}
+[data-testid="stStatus"] [data-testid="stText"] {
+  font-size: 13px !important;
+  color: #1d1d1f !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   AGENT TOOL STATUS
+   ═══════════════════════════════════════════════════════════════════════════ */
+.grv-tool-status {
+  font-size: 11px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(0,0,0,.02);
+  margin: 4px 0;
+  border: 1px solid rgba(0,0,0,.04);
+}

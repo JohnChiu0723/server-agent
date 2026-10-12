@@ -1,0 +1,44 @@
+FROM python:3.11-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+
+ARG DOCKER_CLI_VERSION=27.1.1
+ARG DOCKER_COMPOSE_VERSION=2.29.7
+ARG CBM_VERSION=0.8.1
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        bash \
+        ca-certificates \
+        curl \
+        grep \
+        tar \
+        procps \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN curl -fsSL "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_CLI_VERSION}.tgz" -o /tmp/docker.tgz \
+    && tar -xzf /tmp/docker.tgz -C /tmp \
+    && install -m 0755 /tmp/docker/docker /usr/local/bin/docker \
+    && mkdir -p /usr/local/libexec/docker/cli-plugins \
+    && curl -fsSL "https://github.com/docker/compose/releases/download/v${DOCKER_COMPOSE_VERSION}/docker-compose-linux-x86_64" -o /usr/local/libexec/docker/cli-plugins/docker-compose \
+    && chmod +x /usr/local/libexec/docker/cli-plugins/docker-compose \
+    && rm -rf /tmp/docker /tmp/docker.tgz
+
+RUN curl -fsSL "https://github.com/DeusData/codebase-memory-mcp/releases/download/v${CBM_VERSION}/codebase-memory-mcp-linux-amd64.tar.gz" -o /tmp/cbm.tgz \
+    && tar -xzf /tmp/cbm.tgz -C /tmp \
+    && install -m 0755 /tmp/codebase-memory-mcp /usr/local/bin/codebase-memory-mcp \
+    && rm -rf /tmp/cbm.tgz /tmp/codebase-memory-mcp
+
+COPY agent_proxy_requirements.txt ./
+RUN pip install -r agent_proxy_requirements.txt
+
+COPY agent_proxy.py agent_tools.py agent_infra.py cbm_tools.py ./
+
+EXPOSE 8788
+
+CMD ["sh", "-c", "exec uvicorn agent_proxy:app --host 0.0.0.0 --port 8788 --workers ${AGENT_PROXY_WORKERS:-4} --timeout-keep-alive ${AGENT_PROXY_TIMEOUT_KEEP_ALIVE:-75} --limit-concurrency ${AGENT_PROXY_LIMIT_CONCURRENCY:-100} --backlog 2048"]

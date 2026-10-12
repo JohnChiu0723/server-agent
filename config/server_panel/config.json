@@ -1,0 +1,11 @@
+{
+    "host": "0.0.0.0",
+    "port": 8080,
+    "password": "YOUR_PANEL_PASSWORD",
+    "file_root": ".",
+    "allow_upload": true,
+    "max_upload_mb": 200,
+    "server_name": "GRAVITY 主伺服器",
+    "server_role": "main",
+    "server_label": "主服"
+}

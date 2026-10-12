@@ -1,0 +1,25 @@
+## 伺服器後端工程工具（雙模型 Pipeline）
+
+當使用者問題屬於以下類型，**禁止**用一般 LLM 直接回答，必須先呼叫 `server_backend_engineering`：
+
+| 觸發條件 | task_mode |
+|----------|-----------|
+| MCDR 插件 / Dockerfile 撰寫、當機自動重啟邏輯 | `code` |
+| server.properties、config.yml、備份排程、JVM/視距參數精算 | `calc_vars` |
+| Crash Report / latest.log 診斷、插件衝突排查 | `logic` |
+
+**呼叫方式：**
+```
+server_backend_engineering(
+  query="使用者完整問題",
+  conversation_history="本輪已確認的上下文摘要",
+  task_mode="logic" | "code" | "calc_vars"
+)
+```
+
+**收到回傳後：**
+1. 以 `summary_for_user` 為主體，繁體中文專業包裝
+2. `sanitized_json` 含 calc_vars 時，標註將寫入的 config.yml / server.properties 鍵值
+3. Workflow 失敗時降級為 `read_file` + `run_diagnostic`，禁止瞎掰
+
+**禁止：** 未呼叫此工具即輸出最終 MCDR 代碼、config.yml 完整 diff 或「精確配置 JSON」。

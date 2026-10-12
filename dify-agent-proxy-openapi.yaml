@@ -1,0 +1,453 @@
+openapi: 3.0.3
+info:
+  title: GRAVITY Agent Workspace
+  description: |
+    自架 Dify 用工具鏈。掛載整個「伺服器管家」專案目錄，支援讀寫檔案、grep、
+    bash/docker 指令、Minecraft 伺服器控制（RCON/MCDR/Docker）。
+    自架時 server URL 請用 http://agent_proxy:8788
+  version: 2.3.0
+
+servers:
+  - url: http://agent_proxy:8788
+    description: server-steward Docker 內網（自架 Dify 預設，免 Bearer 驗證）
+
+paths:
+  /health:
+    get:
+      operationId: health_check
+      summary: 健康檢查
+      responses:
+        "200":
+          description: OK
+
+  /exec:
+    post:
+      operationId: run_shell
+      summary: 執行 bash 指令（docker、git、python）。禁止用 curl/wget 抓外部 URL，請改用 fetch_url
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                command:
+                  type: string
+                  description: bash -lc 執行的完整指令
+                cwd:
+                  type: string
+                  description: 工作目錄（相對專案根目錄，預設根目錄）
+                timeout:
+                  type: integer
+                  default: 300
+              required: [command]
+      responses:
+        "200":
+          description: 執行結果（stdout/stderr/exit_code）
+
+  /tool/read_file:
+    post:
+      operationId: read_file
+      summary: 讀取專案內檔案
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                offset:
+                  type: integer
+                  default: 0
+                limit:
+                  type: integer
+                  default: 0
+              required: [path]
+      responses:
+        "200":
+          description: 檔案內容
+
+  /tool/write_file:
+    post:
+      operationId: write_file
+      summary: 寫入專案內檔案
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                content:
+                  type: string
+              required: [path, content]
+      responses:
+        "200":
+          description: 寫入結果
+
+  /tool/list_files:
+    post:
+      operationId: list_files
+      summary: 列出目錄
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  default: .
+              required: [path]
+      responses:
+        "200":
+          description: 目錄列表
+
+  /tool/grep_files:
+    post:
+      operationId: grep_files
+      summary: 在專案內搜尋文字（regex）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pattern:
+                  type: string
+                path:
+                  type: string
+                  default: .
+                glob:
+                  type: string
+                  default: "*"
+              required: [pattern]
+      responses:
+        "200":
+          description: 搜尋結果
+
+  /tool/run_diagnostic:
+    post:
+      operationId: run_diagnostic
+      summary: 綜合診斷伺服器狀態
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                  default: main
+      responses:
+        "200":
+          description: 診斷結果
+
+  /tool/server_status:
+    post:
+      operationId: get_server_status
+      summary: 查詢容器與 server.properties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                  default: main
+              required: [server_type]
+      responses:
+        "200":
+          description: 狀態
+
+  /tool/server_action:
+    post:
+      operationId: server_action
+      summary: 啟動/停止/重啟 MC 容器
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                action:
+                  type: string
+                  enum: [start, stop, restart]
+              required: [server_type, action]
+      responses:
+        "200":
+          description: 執行結果
+
+  /tool/rcon:
+    post:
+      operationId: run_rcon
+      summary: Minecraft 遊戲指令
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                command:
+                  type: string
+              required: [server_type, command]
+      responses:
+        "200":
+          description: RCON 回覆
+
+  /tool/mcdr:
+    post:
+      operationId: run_mcdr
+      summary: MCDR 指令（!!pb 等）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                command:
+                  type: string
+              required: [server_type, command]
+      responses:
+        "200":
+          description: 執行結果
+
+  /tool/logs:
+    post:
+      operationId: get_logs
+      summary: 讀取 latest.log
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                lines:
+                  type: integer
+                  default: 50
+              required: [server_type]
+      responses:
+        "200":
+          description: 日誌
+
+  /tool/update_property:
+    post:
+      operationId: update_server_property
+      summary: 修改 server.properties 單一鍵
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                server_type:
+                  type: string
+                  enum: [main, mirror]
+                key:
+                  type: string
+                value:
+                  type: string
+              required: [server_type, key, value]
+      responses:
+        "200":
+          description: 更新結果
+
+  /tool/run_powershell:
+    post:
+      operationId: run_powershell
+      summary: 在 Windows 宿主機執行 PowerShell（最高權限，經 Host Bridge）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                command:
+                  type: string
+                  description: 完整 PowerShell 指令或腳本
+                cwd:
+                  type: string
+                  description: Windows 工作目錄，如 C:\\Users\\<USER>\\Desktop
+                timeout:
+                  type: integer
+                  default: 600
+              required: [command]
+      responses:
+        "200":
+          description: stdout / exit_code
+
+  /tool/fetch_url:
+    post:
+      operationId: fetch_url
+      summary: 抓取 URL 內容（HTTP GET/POST）。Spark 報告用 url 加 ?raw=1 取 JSON
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                method:
+                  type: string
+                  default: GET
+                body:
+                  type: string
+                headers:
+                  type: object
+                  additionalProperties:
+                    type: string
+              required: [url]
+      responses:
+        "200":
+          description: HTTP 回應內容
+
+  /tool/host_read_file:
+    post:
+      operationId: host_read_file
+      summary: 讀取 Windows 任意路徑檔案（不限專案目錄）
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  description: 如 C:\\Users\\<USER>\\Desktop\\file.txt
+              required: [path]
+      responses:
+        "200":
+          description: 檔案內容
+
+  /tool/host_write_file:
+    post:
+      operationId: host_write_file
+      summary: 寫入 Windows 任意路徑檔案
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                content:
+                  type: string
+              required: [path, content]
+      responses:
+        "200":
+          description: 寫入結果
+
+  /tool/host_list_dir:
+    post:
+      operationId: host_list_dir
+      summary: 列出 Windows 任意目錄
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                path:
+                  type: string
+                  default: C:\\
+              required: [path]
+      responses:
+        "200":
+          description: 目錄列表
+
+  /tool/codebase_memory:
+    post:
+      operationId: codebase_memory
+      summary: 程式碼知識圖譜（codebase-memory-mcp）— 結構化搜尋、呼叫鏈、架構分析
+      description: |
+        透過 codebase-memory-mcp 查詢已索引的程式碼圖譜。常用 tool：
+        - index_repository: {"repo_path":"/workspace/host"}
+        - search_graph: {"name_pattern":".*Handler.*","label":"Function"}
+        - trace_path: {"function_name":"main","direction":"both"}
+        - get_architecture: {}
+        - query_graph: {"query":"MATCH (f:Function) RETURN f.name LIMIT 10"}
+        - search_code: {"pattern":"TODO","project":"伺服器管家"}
+        - get_code_snippet: {"qualified_name":"..."}
+        - list_projects / index_status / detect_changes / get_graph_schema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tool:
+                  type: string
+                  description: CBM 工具名
+                arguments:
+                  type: object
+                  additionalProperties: true
+                  description: 工具參數 JSON 物件
+              required: [tool]
+      responses:
+        "200":
+          description: CBM CLI 原始 JSON 結果
+
+  /tool/server_backend_engineering:
+    post:
+      operationId: server_backend_engineering
+      summary: 伺服器後端工程（雙模型 Workflow：配置精算 / MCDR 代碼 / 日誌診斷）
+      description: |
+        當問題涉及 config.yml、server.properties、MCDR 插件、Dockerfile、
+        Crash Report 診斷或備份排程時必須呼叫。內部調用 deepseek-chat + deepseek-reasoner Pipeline。
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                conversation_history:
+                  type: string
+                task_mode:
+                  type: string
+                  enum: [logic, code, calc_vars]
+                  default: logic
+              required: [query]
+      responses:
+        "200":
+          description: Workflow 輸出（reasoning_text、sanitized_json、summary_for_user）
+
+components: {}
